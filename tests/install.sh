@@ -61,6 +61,7 @@ start omarchy-apply
 run omarchy --apply || fail "apply failed"
 expect_link "$HOME/.config/tmux/tmux.conf" "$ROOT/tmux/tmux.conf"
 expect_link "$HOME/.config/ghostty/config" "$ROOT/ghostty/omarchy/config"
+expect_link "$HOME/.config/ghostty/themes/Monokai SublimeText" "$ROOT/ghostty/themes/Monokai SublimeText"
 expect_link "$HOME/.claude/CLAUDE.md" "$ROOT/dotagents/src/AGENTS.md"
 expect_link "$HOME/.claude/skills/operate" "$ROOT/dotagents/src/skills/operate"
 grep -qF 'export WORKSPACE_DIR="$HOME/workspace"' "$HOME/.bashrc" || fail "WORKSPACE_DIR missing"
@@ -110,20 +111,30 @@ start mac-personal-apply
 export DOTFILES_UNAME=Darwin
 run mac-personal --apply || fail "apply failed"
 expect_link "$HOME/.config/ghostty/config" "$ROOT/ghostty/macos/config"
-expect_link "$HOME/.config/ghostty/themes/Monokai SublimeText" "$ROOT/ghostty/macos/themes/Monokai SublimeText"
+expect_link "$HOME/.config/ghostty/themes/Monokai SublimeText" "$ROOT/ghostty/themes/Monokai SublimeText"
 grep -qF 'export WORKSPACE_DIR="$HOME/Documents/workspace"' "$HOME/.zshrc" || fail "WORKSPACE_DIR missing"
 [ ! -e "$HOME/.bashrc" ] || fail "mac wrote .bashrc"
 pass
 
-start mac-packages-differ
+start packages-per-profile
+run omarchy --packages
+reject_log "jdk21-openjdk"
+reject_log "rbenv"
+reject_log "arduino-cli"
+expect_log "tailscale"
 export DOTFILES_UNAME=Darwin
 run mac-personal --packages
+expect_log "arduino-cli"
 expect_log "tailscale-app"
+reject_log "openjdk@21"
+reject_log "rbenv"
 reject_log "--appdir"
 run mac-work --packages
-reject_log "tailscale-app"
-expect_log "--appdir=$HOME/Applications"
 expect_log "openjdk@21"
+expect_log "--appdir=$HOME/Applications"
+reject_log "arduino-cli"
+reject_log "tailscale-app"
+reject_log "rbenv"
 pass
 
 start local-override

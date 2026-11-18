@@ -196,15 +196,12 @@ install_ghostty() {
   local legacy="$HOME/Library/Application Support/com.mitchellh.ghostty/config"
 
   link "$DOTFILES_ROOT/ghostty/$DOTFILES_PLATFORM/config" "$HOME/.config/ghostty/config"
+  link "$DOTFILES_ROOT/ghostty/themes/Monokai SublimeText" \
+    "$HOME/.config/ghostty/themes/Monokai SublimeText"
 
-  if [ "$DOTFILES_PLATFORM" = macos ]; then
-    link "$DOTFILES_ROOT/ghostty/macos/themes/Monokai SublimeText" \
-      "$HOME/.config/ghostty/themes/Monokai SublimeText"
-
-    if [ -f "$legacy" ]; then
-      say "  note:  $legacy also loads, after ~/.config/ghostty/config."
-      say "         Move it aside so it does not override these settings."
-    fi
+  if [ "$DOTFILES_PLATFORM" = macos ] && [ -f "$legacy" ]; then
+    say "  note:  $legacy also loads, after ~/.config/ghostty/config."
+    say "         Move it aside so it does not override these settings."
   fi
 }
 

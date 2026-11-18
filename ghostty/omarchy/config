@@ -1,5 +1,5 @@
-# Dynamic theme colors
-config-file = ?"~/.local/state/omarchy/current/theme/ghostty.conf"
+# Theme (replaces the Omarchy dynamic theme colors)
+theme = Monokai SublimeText
 
 # Font
 font-family = "JetBrainsMono Nerd Font"
