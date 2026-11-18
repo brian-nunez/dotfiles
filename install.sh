@@ -257,7 +257,7 @@ install_agents() {
 }
 
 install_packages() {
-  local formulae casks pacman_packages appdir
+  local formulae casks pacman_packages missing package appdir
 
   if [ "$DOTFILES_PLATFORM" = omarchy ]; then
     pacman_packages=(git neovim tmux fzf go nodejs npm ghostty ttf-jetbrains-mono-nerd)
@@ -267,8 +267,23 @@ install_packages() {
     [ "$DOTFILES_DOCKER" = 1 ] && pacman_packages+=(docker docker-compose)
     [ "$DOTFILES_TAILSCALE" = 1 ] && pacman_packages+=(tailscale)
 
-    change "sudo pacman -S --needed ${pacman_packages[*]}" || return 0
-    sudo pacman -S --needed "${pacman_packages[@]}"
+    # Install only what is missing. pacman -T honours "provides", so packages
+    # Omarchy already supplies (e.g. ttf-jetbrains-mono-nerd-basic for the
+    # Nerd Font) are left alone instead of being replaced.
+    missing=()
+    while IFS= read -r package; do
+      [ -n "$package" ] && missing+=("$package")
+    done <<EOF_MISSING
+$(pacman -T "${pacman_packages[@]}" || true)
+EOF_MISSING
+
+    if [ "${#missing[@]}" = 0 ]; then
+      say "  ok:    packages"
+      return 0
+    fi
+
+    change "sudo pacman -S --needed ${missing[*]}" || return 0
+    sudo pacman -S --needed "${missing[@]}"
     return 0
   fi
 

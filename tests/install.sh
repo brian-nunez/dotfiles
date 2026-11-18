@@ -8,6 +8,28 @@ ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 
+# Fake pacman: "-T" reports every package as missing except those listed in
+# FAKE_PACMAN_INSTALLED, so package tests do not depend on the host.
+mkdir -p "$WORK/bin"
+cat >"$WORK/bin/pacman" <<'EOF_PACMAN'
+#!/usr/bin/env bash
+[ "$1" = -T ] || exit 1
+shift
+missing=0
+for package in "$@"; do
+  case " ${FAKE_PACMAN_INSTALLED:-} " in
+    *" $package "*) ;;
+    *)
+      echo "$package"
+      missing=1
+      ;;
+  esac
+done
+[ "$missing" = 0 ] || exit 127
+EOF_PACMAN
+chmod +x "$WORK/bin/pacman"
+export PATH="$WORK/bin:$PATH"
+
 failures=0
 start_failures=0
 current=""
@@ -114,6 +136,19 @@ expect_link "$HOME/.config/ghostty/config" "$ROOT/ghostty/macos/config"
 expect_link "$HOME/.config/ghostty/themes/Monokai SublimeText" "$ROOT/ghostty/themes/Monokai SublimeText"
 grep -qF 'export WORKSPACE_DIR="$HOME/Documents/workspace"' "$HOME/.zshrc" || fail "WORKSPACE_DIR missing"
 [ ! -e "$HOME/.bashrc" ] || fail "mac wrote .bashrc"
+pass
+
+start omarchy-skips-installed-packages
+export FAKE_PACMAN_INSTALLED="git ttf-jetbrains-mono-nerd"
+run omarchy --packages
+expect_log "would: sudo pacman -S --needed neovim"
+reject_log "ttf-jetbrains-mono-nerd"
+reject_log " git "
+export FAKE_PACMAN_INSTALLED="git neovim tmux fzf go nodejs npm ghostty ttf-jetbrains-mono-nerd docker docker-compose tailscale"
+run omarchy --packages
+expect_log "ok:    packages"
+reject_log "pacman -S"
+unset FAKE_PACMAN_INSTALLED
 pass
 
 start packages-per-profile
