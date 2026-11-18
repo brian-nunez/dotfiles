@@ -10,8 +10,9 @@ shell scripts, agent instructions and skills, tmux, and Ghostty.
 | `shell-scripts/` | Shell environment, imported from [shell-scripts](https://github.com/brian-nunez/shell-scripts). Load it with `source /path/to/shell-scripts/init.sh`. |
 | `dotagents/` | Agent instructions and skills, imported from [dotagents](https://github.com/brian-nunez/dotagents), with its own `install.sh`. |
 | `tmux/tmux.conf` | tmux configuration. |
-| `ghostty/omarchy/config` | Ghostty on Omarchy (follows the Omarchy theme). |
-| `ghostty/macos/` | Ghostty on macOS: Brian's Mac settings, portable Omarchy settings, and the Monokai SublimeText theme. |
+| `ghostty/omarchy/config` | Ghostty on Omarchy. |
+| `ghostty/macos/config` | Ghostty on macOS: Brian's Mac settings plus portable Omarchy settings. |
+| `ghostty/themes/` | Monokai SublimeText theme, used on every machine. |
 | `profiles/` | Per-machine settings: shell startup file, workspace directory, optional packages. |
 | `install.sh` | Links everything into `$HOME` for one profile. |
 
@@ -39,12 +40,11 @@ Profiles: `omarchy`, `mac-personal`, `mac-work`. The installer:
   # <<< dotfiles <<<
   ```
 
-- Links `~/.config/tmux/tmux.conf` and `~/.config/ghostty/config` (plus the
-  theme on macOS).
+- Links `~/.config/tmux/tmux.conf`, `~/.config/ghostty/config`, and the
+  Ghostty theme.
 - Runs `dotagents/install.sh` to link agent instructions and skills.
 - With `--packages`, installs packages with pacman (Omarchy) or Homebrew
-  (macOS). The work profile skips Tailscale and installs apps into
-  `~/Applications`.
+  (macOS). The work profile installs apps into `~/Applications`.
 
 Files that get replaced are backed up first, under
 `~/.local/state/dotfiles/backups/<timestamp>/`. Run the installer again any time; it
@@ -57,12 +57,16 @@ only changes what differs.
 | Shell startup file | `~/.bashrc` | `~/.zshrc` | `~/.zshrc` |
 | `WORKSPACE_DIR` (used by `goto`, `gtg`) | `~/workspace` | `~/Documents/workspace` | `~/Documents/workspace` |
 | Tailscale | yes | yes | no |
+| Arduino CLI | no | yes | no |
+| Java 21 | no | no | yes |
+| Ruby (rbenv) | no | no | no |
+| Docker CLI | yes | yes | yes |
 
 To change a setting on one machine only, create `local/<profile>.sh`. This
 directory is ignored by git:
 
 ```bash
-DOTFILES_DOCKER=0
+DOTFILES_RUBY=1
 DOTFILES_WORKSPACE='$HOME/code'
 ```
 
@@ -77,6 +81,8 @@ commit it.
 
 ## Notes
 
+- Ghostty uses the Monokai SublimeText theme everywhere, including Omarchy, so
+  Omarchy theme changes no longer recolor Ghostty.
 - Ghostty on macOS: `window-decoration = none` hides the native tabs. If
   `~/Library/Application Support/com.mitchellh.ghostty/config` exists, it loads
   after `~/.config/ghostty/config` and overrides it. The installer warns when
