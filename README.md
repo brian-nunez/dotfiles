@@ -74,6 +74,15 @@ into this repository. Move it to the new location yourself when ready. All files
 and the repository's `local/` directory are ignored. Never put secrets into
 profiles, tracked files, or command arguments. Git identity is not set globally.
 
+## Ghostty on macOS
+
+Both Mac profiles load the shared Omarchy-derived keyboard, cursor, and SSH
+integration settings, followed by `config/ghostty/macos.conf`. Mac overrides keep
+28-point text, 10-point padding, borderless screen-sized windows, copy-on-select,
+and Brian's exact Monokai SublimeText colors from the included theme file.
+`window-decoration = none` disables native macOS tabs; set it to `auto` to use the
+configured tabs titlebar. Omarchy continues to use its dynamic system theme.
+
 ## Updates and recovery
 
 Keep the clone in place: shell modules and skills refer to its absolute path.
