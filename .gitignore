@@ -1,4 +1,4 @@
-secrets.sh
-**/secrets.sh
+# Machine-specific overrides and private values never belong in this repo.
 /local/
+secrets.sh
 .DS_Store
