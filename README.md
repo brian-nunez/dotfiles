@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/brand/icon.svg" width="128" height="128" alt="dotfiles icon: an engraved hermit crab beneath a spiral shell on a deep teal tile">
+</p>
+
 # dotfiles
 
 Brian's machine setup for Omarchy and Apple Silicon Macs (personal and work):
