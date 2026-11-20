@@ -226,8 +226,8 @@ agents_linked() {
 }
 
 install_agents() {
-  local source="$DOTFILES_ROOT/dotagents/src/AGENTS.md"
-  local target
+  local src="$DOTFILES_ROOT/dotagents/src"
+  local target skill root
 
   if [ "$DOTFILES_AGENTS" != 1 ]; then
     say "  skip:  agents (DOTFILES_AGENTS=0)"
@@ -251,6 +251,21 @@ install_agents() {
     if [ -f "$target" ] && [ ! -L "$target" ]; then
       backup "$target"
     fi
+  done
+
+  # The repo is the only source for its skills. dotagents/install.sh refuses
+  # to replace a real directory, so back up and remove any copy of a repo
+  # skill first. Skills the repo does not ship stay in place.
+  for skill in "$src"/skills/*/; do
+    skill=${skill%/}
+    [ -f "$skill/SKILL.md" ] || continue
+    for root in .gemini/config/skills .codex/skills .claude/skills .agents/skills; do
+      target="$HOME/$root/${skill##*/}"
+      if [ -e "$target" ] && [ ! -L "$target" ]; then
+        backup "$target"
+        rm -rf "$target"
+      fi
+    done
   done
 
   bash "$DOTFILES_ROOT/dotagents/install.sh" >/dev/null

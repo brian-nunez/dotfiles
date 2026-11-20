@@ -108,6 +108,21 @@ printf '%s\n' "$backups" | grep -q '/\.bashrc$' || fail ".bashrc not backed up"
 printf '%s\n' "$backups" | grep -q '/\.config/tmux/tmux\.conf$' || fail "tmux.conf not backed up"
 pass
 
+start copied-skills-replaced
+mkdir -p "$HOME/.claude/skills/operate/references" "$HOME/.codex/skills/docker-patterns" "$HOME/.claude/skills/not-from-repo"
+printf 'stale copy\n' >"$HOME/.claude/skills/operate/SKILL.md"
+printf 'local note\n' >"$HOME/.claude/skills/operate/references/roster.md"
+printf 'stale copy\n' >"$HOME/.codex/skills/docker-patterns/SKILL.md"
+printf 'keep me\n' >"$HOME/.claude/skills/not-from-repo/SKILL.md"
+run omarchy --apply || fail "apply failed"
+expect_link "$HOME/.claude/skills/operate" "$ROOT/dotagents/src/skills/operate"
+expect_link "$HOME/.codex/skills/docker-patterns" "$ROOT/dotagents/src/skills/docker-patterns"
+[ "$(cat "$HOME/.claude/skills/not-from-repo/SKILL.md" 2>/dev/null)" = 'keep me' ] || fail "unrelated skill changed"
+backups=$(find "$HOME/.local/state/dotfiles/backups" -type f | sort)
+printf '%s\n' "$backups" | grep -q '/\.claude/skills/operate/references/roster\.md$' || fail "operate copy not backed up"
+printf '%s\n' "$backups" | grep -q '/\.codex/skills/docker-patterns/SKILL\.md$' || fail "docker-patterns copy not backed up"
+pass
+
 start shell-loads-in-bash
 run omarchy --apply
 out=$(bash -c '. "$HOME/.bashrc"; type goto >/dev/null && type gotogit >/dev/null && echo "ws=$WORKSPACE_DIR"' 2>&1) ||
