@@ -8,15 +8,16 @@ The models Brian has approved for dispatch, with their budget tier and observed 
 | --- | --- | --- |
 | Claude, $100/month | Plentiful | Opus 5.5 as the operator and as native subagents |
 | OpenAI, $20/month | Scarce | GPT-6.1 Sol |
-| Google, $20/month | Scarce, uneven | Gemini 4 Argon (limited), Gemini 3.8 Flash (generous), plus Opus, Sonnet, and GPT-OSS 120B through the Google provider |
+| Google, $20/month | Scarce, uneven | Gemini 4 Neon (limited, highest value), Gemini 4 Argon (limited), Gemini 3.8 Flash (generous), plus Opus, Sonnet, and GPT-OSS 120B through the Google provider |
 
 ## Capability ranking
 
 Capability gaps between these models are wide. Opus 5.5 at max effort is in a different class from Gemini 3.8 Flash at high. Match the model to the judgement a task needs, and weigh every result by who produced it.
 
 1. **Claude Opus 5.5** (the operator, and native subagents at medium). Strongest reasoning and judgement.
-2. **GPT-6.1 Sol** and **Gemini 4 Argon**. Strong. Their findings are usually sound and still get checked against Brian's intent.
-3. **Gemini 3.8 Flash**. Fast and cheap, with shallow judgement. Good for mechanical sweeps and catching gaps. Its findings are leads that you verify one by one before acting.
+2. **Gemini 4 Neon**. The strongest model outside Claude and the top Google model, ahead of Argon. Brian's choice for large context, large output, deep reasoning, and the deciding second opinion. Its findings still get checked against Brian's intent.
+3. **GPT-6.1 Sol** and **Gemini 4 Argon**. Strong. Their findings are usually sound and still get checked against Brian's intent.
+4. **Gemini 3.8 Flash**. Fast and cheap, with shallow judgement. Good for mechanical sweeps and catching gaps. Its findings are leads that you verify one by one before acting.
 
 ## Observations
 
@@ -39,7 +40,11 @@ Portability test, applied to every new or changed entry: it names no project, ph
 - **Dispatch:** native subagent (`Agent`), provider `claudeAgent`, model `claude-opus-5-5`, effort `medium`.
 - **Use for:** implementation, integration, repo-wide changes, work that needs this harness's tools or Claude-side skills. The default whenever no reason points elsewhere.
 - **Fallback:** Claude Sonnet 5.5 natively. Cross-family review still needs a non-Claude reviewer.
-- **Observed:** not yet dispatched as a subagent.
+- **Observed:**
+  - **Reliable at:** multi-file builds from a binding written spec, medium effort: follows the spec, logs its own decisions, keeps unrelated output (golden files) untouched, and runs the checks the brief names. (repeated)
+  - **Reliable at:** surfacing defects outside its scope while building (a doc example its own validation rejects, a pre-existing crash) and calling them out instead of silently working around them. (repeated)
+  - **Weak at:** knowing where an isolated worktree starts: it starts at the default branch, not the operator's branch, and it cannot write to the shared checkout's handoff directory. Compensate: name the exact base commit with a check-and-switch first step, and tell it where handoff files go when isolated. (repeated)
+  - **Weak at:** hostile input in parsers and validators it writes: its tests cover the obvious bypasses and miss format-level ones (type tags, aliases, reordering). Compensate: name the adversarial categories in the brief, and always follow with a cross-family security review. (seen once)
 
 ### GPT-6.1 Sol, low effort
 
@@ -51,11 +56,27 @@ Portability test, applied to every new or changed entry: it names no project, ph
   - **Reliable at:** reporting: lists unverified items honestly, and reports a gate failure it did not cause instead of working around it. (seen once)
   - **Weak at:** self-critique of its own build: catches rule violations (accessibility checks, overflow, greps) and misses taste problems, redundancy, and regressions its own fix introduced. Compensate: an independent review after every round. (seen once)
   - **Brief it with:** a named shortlist of artifacts. Without one it produces exhaustive output. (seen once)
+  - **Reliable at:** security review at high effort: builds executable reproductions against the real pinned dependency or a second verifier, cites upstream source and RFCs, and separates verified claims from source-inspection predictions. Caught defects the builder's own tests could not. (repeated)
+  - **Reliable at:** re-review at medium effort: checks each earlier finding independently, actively tries new bypasses, and checks each commit in a stack is coherent by itself. (repeated)
+
+### Gemini 4 Neon, high thinking
+
+- **Dispatch:** provider `antigravity`, model `gemini-4-neon`, `thought_level: high` by default, `medium` for lighter passes. Use `xhigh` only when Brian asks for it or the reasoning clearly demands it.
+- **Budget:** limited quota. Neon is not a default: every Neon dispatch needs one of the triggers below, and you record that trigger in your report.
+- **Must use for:** any task that needs one of these. Neon is mandatory here, ahead of every other Google model and ahead of GPT-6.1 Sol:
+  - **Large context:** the input is too large for other models to hold whole (a full repository, long specs, many documents read together).
+  - **Large output:** the deliverable is long and must stay coherent from start to end.
+  - **Deep intelligence:** hard reasoning, architecture, subtle correctness or security analysis, research that needs synthesis.
+  - **The correct opinion:** a decision, recommendation, or tie-break where the answer must be right, including disputed findings between other reviewers.
+- **Do not use for:** sweeps, triage, mechanical fixes, routine builds, or first-pass review. Those go to Gemini 3.8 Flash, GPT-6.1 Sol, or Claude.
+- **Fallback:** Gemini 4 Argon at `high`, then GPT-6.1 Sol at `high`, then Claude Opus 5.5 natively.
+- **Constraint:** assume the same sandbox as Argon until a run shows otherwise: it cannot write outside the workspace.
+- **Observed:** not yet dispatched.
 
 ### Gemini 4 Argon, medium thinking
 
 - **Dispatch:** provider `antigravity`, model `gemini-4-argon`, `thinking_level: medium` by default, `low` for lighter passes. Limited and expensive quota, so every Argon dispatch needs a reason. Use `high` only when Brian asks for it or the reasoning clearly demands it.
-- **Use for:** research that needs reasoning, brainstorming with a recommendation, independent review of high-stakes builds.
+- **Use for:** research that needs reasoning, brainstorming with a recommendation, independent review of high-stakes builds, when the task does not hit a Neon trigger or Neon is out of quota.
 - **Fallback:** Gemini 3.8 Flash, then GPT-6.1 Sol for reviews, then Claude Opus or Sonnet on `antigravity`.
 - **Constraint:** its sandbox cannot write outside the workspace.
 - **Observed** (all at `high`; recalibrate as medium-effort runs come in):
