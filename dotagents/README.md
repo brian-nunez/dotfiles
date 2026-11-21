@@ -16,7 +16,7 @@
 <p align="center">
   <img alt="Written in Bash and Markdown" src="https://img.shields.io/badge/written%20in-Bash%20%C2%B7%20Markdown-4338ca?style=flat-square&logo=gnubash&logoColor=white">
   <img alt="Agents: Claude Code, Codex, Gemini, OpenCode" src="https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Gemini%20%C2%B7%20OpenCode-6366f1?style=flat-square">
-  <img alt="Skills: 14" src="https://img.shields.io/badge/skills-14-4338ca?style=flat-square">
+  <img alt="Skills: 15" src="https://img.shields.io/badge/skills-15-4338ca?style=flat-square">
   <br>
   <a href="https://www.linkedin.com/in/brianjnunez/"><img alt="LinkedIn: Brian Nunez" src="https://img.shields.io/badge/LinkedIn-Brian%20Nunez-0A66C2?style=flat-square&logo=linkedin&logoColor=white"></a>
 </p>
@@ -64,6 +64,7 @@ Each skill is a directory under [`src/skills/`](src/skills) with a `SKILL.md` fi
 | **[Operate](src/skills/operate/SKILL.md)** | Auto | Runs work as an operator: reads intent, dispatches subagents from a budgeted model [roster](src/skills/operate/references/roster.md), routes work to Brian's task [skills](src/skills/operate/references/skills.md), supervises them with cross-model review, and delivers the result as a pull request. |
 | **[Programming](src/skills/programming/SKILL.md)** | Auto | Tech stack, package managers and coding standards for software engineering tasks. |
 | **[State-machine Analysis](src/skills/state-machine-analysis/SKILL.md)** | Auto | Discovers and documents explicit and implicit state machines within and across Go applications, with optional semantic navigation, transition diagrams, recovery analysis, evidence, and coverage gaps. |
+| **[Trust Pyramid](src/skills/trust-pyramid/SKILL.md)** | Auto | Audits a repository's deterministic guardrails and verification stack (Go first), identifies gaps across formatting, linting, vet, architecture boundaries, security, and testing layers, produces a phased migration plan, and implements approved waves. |
 | **[README Writing](src/skills/readme-writing/SKILL.md)** | Auto | Writes a README in a fixed house style, then renders and checks it visually with the bundled [scripts](src/skills/readme-writing/scripts). |
 | **[UI Design](src/skills/ui-design/SKILL.md)** | Auto | Designs the look, feel and UX of a page or screen: discovery interview, confirmed brief, grayscale directions, an HTML mockup and screenshot-driven self-critique, with bundled tokens, palettes and icons. |
 | **[UX Design](src/skills/ux-design/SKILL.md)** | Auto | Uses an adaptive discovery interview, an agreed brief and iterative design-tool or isolated HTML mockups to refine visual direction, UX flows and responsive interfaces, with 14 focused references. |
