@@ -11,6 +11,7 @@ Two skills are manual (`disable-model-invocation: true`), so the harness will no
 | `project-foundations` (manual) | A repository's small details: AGENTS.md, ADRs, LICENSE, ignore files, CODEOWNERS, README | Operator or subagent |
 | `readme-writing` | A README in Brian's house style, rendered and checked visually | Operator or subagent |
 | `state-machine-analysis` | Rare, deep work: documenting explicit and implicit state machines in Go systems | Operator or subagent |
+| `trust-pyramid` | Auditing a Go repo's deterministic guardrails and testing layers, producing a phased migration plan, and implementing approved waves | Operator or subagent |
 | `ux-design` then `ui-design` | `ux-design` creates the UX design in Figcraft files. `ui-design` turns it into the implemented visual design | Operator or subagent, in that order |
 
 ## Running a skill through a subagent
