@@ -14,6 +14,9 @@ and do not pollute `go.mod` with dev-only linter modules.
     (`amd64`/`arm64`) and verify against pinned **SHA-256 checksums**.
   - `govulncheck` (`golang.org/x/vuln/cmd/govulncheck@<pinned-version>`)
   - `deadcode` (`golang.org/x/tools/cmd/deadcode@<pinned-version>`)
+  - `gorelease` (`golang.org/x/exp/cmd/gorelease@<pseudo-version>`) for the
+    library API compatibility gate. It has no tagged releases, so pin a
+    pseudo-version.
   - `gremlins` (`github.com/go-gremlins/gremlins/cmd/gremlins@<pinned-version>`)
     installed on demand for mutation testing so regular PR checks stay fast.
 - Wire both `Makefile` (`fmt`, `fmt-check`, `lint`, `vuln`, `deadcode`,
@@ -32,7 +35,9 @@ and do not pollute `go.mod` with dev-only linter modules.
 - `make deadcode` — fail if `deadcode -test ./...` prints any unreachable function
 - `make test` — `go test -race ./...`
 - `make tidy-check` — `go mod tidy -diff`
-- `make check` — runs every PR gate in order (`fmt-check vet lint vuln deadcode test test-scripts <drift-checks> tidy-check`)
+- `make api-check` — library API compatibility against the latest release
+  tag ([testing layers §2](testing-layers.md))
+- `make check` — runs every PR gate in order (`fmt-check vet lint vuln deadcode test test-scripts <drift-checks> tidy-check`, plus `api-check` for a library)
 
 ## 2. Strict `.golangci.yml` (v2)
 
