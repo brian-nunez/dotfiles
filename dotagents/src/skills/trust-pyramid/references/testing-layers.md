@@ -3,6 +3,28 @@
 A high-trust codebase layers multiple independent verification techniques so
 mistakes that slip past one layer are caught deterministically by another.
 
+## Oracle Independence
+
+A test is only independent when its **oracle**, the rule that decides pass or
+fail, comes from somewhere other than the code under test. An oracle derived
+from the implementation reproduces the implementation's bugs and stays green
+forever: the circular test.
+
+- **Source every oracle from documentation.** Read the godoc, README, or spec
+  first, write the oracle from that text, and cite the sentence it encodes in
+  the test's comment. A contract test that locks a known quirk says so
+  explicitly.
+- **A disagreement is a finding.** When the documented oracle and the code
+  disagree, the test is doing its job. Keep the oracle as documented, record
+  the disagreement, and classify it with the findings protocol in `SKILL.md`.
+- **Brief subagents with the documentation.** A subagent writing tests gets
+  the documentation text as its specification and the instruction to report
+  every disagreement as a finding. A subagent left to read only the code
+  writes an oracle that mirrors it.
+- **Review oracles against the text.** Before accepting a fuzz or property
+  test, compare each predicate (allowed characters, accepted inputs, error
+  conditions) with the sentence it claims to encode.
+
 ## 1. Unit Tests with Race Detector (Mandatory)
 
 - Always run `go test -race ./...` in `make test` and PR CI.
@@ -40,6 +62,18 @@ Cover every external surface the repository exposes:
 - **Core / library contract (`internal/core/contract_test.go`):**
   - Exported error sentinels (`errors.Is`), resource/config pins, secret
     redaction guarantees, and output mode contracts.
+- **Library API compatibility (published libraries):** The exported API of
+  every released module is the contract, and the release tags record it.
+  - `scripts/api-check.sh` (run by `make api-check` and a PR workflow job)
+    finds the modules a change touches and runs pinned `gorelease` (or
+    `apidiff`) against each module's latest stable release tag.
+  - An incompatible change passes only when a commit marks it breaking
+    (Conventional Commits `!` or a `BREAKING CHANGE:` footer). A breaking
+    change past v1 also needs the `/vN` module path.
+  - Self-test the script against a throwaway repository and a local
+    `file://` module proxy that serves the released version, covering: a
+    compatible addition passes, an unmarked removal fails, a marked removal
+    passes, and a module with no stable tag is skipped.
 
 ## 3. Regression Tests (Required)
 
