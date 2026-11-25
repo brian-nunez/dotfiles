@@ -7,6 +7,7 @@ Two skills are manual (`disable-model-invocation: true`), so the harness will no
 | Skill | Use for | Who runs it |
 | --- | --- | --- |
 | `go-library-dx` | Designing or reviewing a Go library's public API by its call sites | **Operator only.** API shape is judgement work that stays with you |
+| `market-recap` | A sourced market move, inflation, Fed, and recession-indicator report with a yes or no recession verdict | Operator or subagent |
 | `messaging-architecture` (manual) | Shaping the full message of an idea or an entire project before slides, docs, or a talk | **Operator only.** It interviews Brian and sets the narrative |
 | `project-foundations` (manual) | A repository's small details: AGENTS.md, ADRs, LICENSE, ignore files, CODEOWNERS, README | Operator or subagent |
 | `readme-writing` | A README in Brian's house style, rendered and checked visually | Operator or subagent |
